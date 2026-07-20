@@ -54,9 +54,19 @@ func handle(c net.Conn, s *state.Store, snapshot string) {
 		}
 		if err := s.Apply(e); err == nil {
 			_ = s.Save(snapshot)
-			_ = exec.Command("sketchybar", "--trigger", "agent_status_change").Run()
+			_ = exec.Command(sketchybarBin(), "--trigger", "agent_status_change").Run()
 		}
 	}
+}
+
+func sketchybarBin() string {
+	if path := os.Getenv("SKETCHYBAR_BIN"); path != "" {
+		return path
+	}
+	if path, err := exec.LookPath("sketchybar"); err == nil {
+		return path
+	}
+	return "/opt/homebrew/bin/sketchybar"
 }
 func defaultDir() string {
 	if d := os.Getenv("XDG_STATE_HOME"); d != "" {
