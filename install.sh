@@ -37,6 +37,8 @@ sketchybar --reload
 sed -e "s|__INSTALL_DIR__|$INSTALL_DIR|g" -e "s|__HOME__|$HOME|g" "$ROOT/launchd/com.mitchmalone.sketchybar-agent-status.plist" > "$PLIST"
 launchctl bootout "gui/$(id -u)" "$PLIST" 2>/dev/null || true
 launchctl bootstrap "gui/$(id -u)" "$PLIST"
+launchctl kickstart -k "gui/$(id -u)/com.mitchmalone.sketchybar-agent-status"
+sleep 0.2
 echo "Installed daemon and reloaded SketchyBar."
 if [[ "$INSTALL_CLAUDE_HOOKS" == true ]]; then
   /usr/bin/python3 "$INSTALL_DIR/hooks/install-claude-hooks.py" "$HOME/.claude/settings.json"

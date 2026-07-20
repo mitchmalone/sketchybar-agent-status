@@ -13,6 +13,9 @@ grep -F 'Jump to tmux pane' "$temp/commands" >/dev/null
 grep -F 'icon=👀' "$temp/commands" >/dev/null
 grep -F 'Task: Review plan' "$temp/commands" >/dev/null
 grep -F 'tmux target: work:1.0' "$temp/commands" >/dev/null
+grep -F 'label.drawing=off width=30' "$temp/commands" >/dev/null
+grep -F 'popup.background.drawing=on' "$temp/commands" >/dev/null
+grep -F 'background.drawing=off' "$temp/commands" >/dev/null
 before_lines="$(wc -l < "$temp/commands")"
 XDG_STATE_HOME="$temp/state" SKETCHYBAR_BIN="$temp/bin/sketchybar" SKETCHYBAR_LOG="$temp/commands" FAKE_ITEMS="$temp/items" AGENT_STATUS_HOME="$root" "$root/scripts/agent_status.sh"
 ! tail -n "+$((before_lines + 1))" "$temp/commands" | grep -F -- '--add item' >/dev/null

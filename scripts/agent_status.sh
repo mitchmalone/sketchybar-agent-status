@@ -10,6 +10,7 @@ RENDERED_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/ren
 : "${AGENT_STATUS_MAX_ITEMS:=5}"
 : "${AGENT_ICON_STARTING:=⏳}" "${AGENT_ICON_WORKING:=🧑‍🍳}" "${AGENT_ICON_IDLE:=😴}" "${AGENT_ICON_ATTENTION:=👀}" "${AGENT_ICON_COMPLETED:=✅}" "${AGENT_ICON_FAILED:=❌}" "${AGENT_ICON_UNKNOWN:=❔}"
 : "${AGENT_COLOR_WORKING:=0xff8aadf4}" "${AGENT_COLOR_IDLE:=0xffa6adc8}" "${AGENT_COLOR_ATTENTION:=0xfff9e2af}" "${AGENT_COLOR_COMPLETED:=0xffa6e3a1}" "${AGENT_COLOR_FAILED:=0xfff38ba8}"
+: "${AGENT_ITEM_BG:=0x332a0a3f}" "${AGENT_ITEM_BORDER:=0xffc084fc}" "${AGENT_POPUP_BG:=0xff2a0a3f}" "${AGENT_POPUP_TEXT:=0xfff5efff}" "${AGENT_POPUP_MUTED:=0xffbca8cf}"
 
 upper(){ printf '%s' "$1" | tr '[:lower:]' '[:upper:]'; }
 icon_for(){
@@ -40,13 +41,13 @@ while IFS= read -r line; do
   ensure_item "$name.target" "popup.$name"
   ensure_item "$name.updated" "popup.$name"
   ensure_item "$name.jump" "popup.$name"
-  $SKETCHYBAR_BIN --set "$name" icon="$icon" label="${title:-$agent}" icon.color="$color" label.max_chars=18 background.drawing=on click_script="$SKETCHYBAR_BIN --set $name popup.drawing=toggle" popup.align=right popup.background.corner_radius=0 popup.background.border_width=1
-  $SKETCHYBAR_BIN --set "$name.info" icon.drawing=off label="Agent: ${agent} · State: ${status}"
-  $SKETCHYBAR_BIN --set "$name.task" icon.drawing=off label="Task: ${title:-Not available yet}"
-  $SKETCHYBAR_BIN --set "$name.detail" icon.drawing=off label="Latest: ${detail:-No lifecycle detail yet}"
-  $SKETCHYBAR_BIN --set "$name.target" icon.drawing=off label="tmux target: ${tmux:-Not detected}"
-  $SKETCHYBAR_BIN --set "$name.updated" icon.drawing=off label="Updated: ${updated:-Unknown}"
-  $SKETCHYBAR_BIN --set "$name.jump" icon="↗" label="Jump to tmux pane" click_script="${AGENT_STATUS_HOME:-$HOME/.local/share/sketchybar-agent-status}/scripts/jump.sh '$tmux'; $SKETCHYBAR_BIN --set $name popup.drawing=off"
+  $SKETCHYBAR_BIN --set "$name" icon="$icon" icon.color="$color" icon.width=30 icon.align=center icon.padding_left=0 icon.padding_right=0 label.drawing=off width=30 padding_left=0 padding_right=0 background.drawing=on background.color="$AGENT_ITEM_BG" background.border_color="$AGENT_ITEM_BORDER" click_script="$SKETCHYBAR_BIN --set $name popup.drawing=toggle" popup.align=right popup.background.drawing=on popup.background.color="$AGENT_POPUP_BG" popup.background.border_color="$AGENT_ITEM_BORDER" popup.background.corner_radius=0 popup.background.border_width=1 popup.background.padding_left=8 popup.background.padding_right=8
+  $SKETCHYBAR_BIN --set "$name.info" icon.drawing=off label="Agent: ${agent} · State: ${status}" label.color="$AGENT_POPUP_TEXT" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=4 label.padding_right=4 width=280 background.drawing=off
+  $SKETCHYBAR_BIN --set "$name.task" icon.drawing=off label="Task: ${title:-Not available yet}" label.color="$AGENT_POPUP_TEXT" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=4 label.padding_right=4 width=280 background.drawing=off
+  $SKETCHYBAR_BIN --set "$name.detail" icon.drawing=off label="Latest: ${detail:-No lifecycle detail yet}" label.color="$AGENT_POPUP_MUTED" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=4 label.padding_right=4 width=280 background.drawing=off
+  $SKETCHYBAR_BIN --set "$name.target" icon.drawing=off label="tmux target: ${tmux:-Not detected}" label.color="$AGENT_POPUP_MUTED" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=4 label.padding_right=4 width=280 background.drawing=off
+  $SKETCHYBAR_BIN --set "$name.updated" icon.drawing=off label="Updated: ${updated:-Unknown}" label.color="$AGENT_POPUP_MUTED" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=4 label.padding_right=4 width=280 background.drawing=off
+  $SKETCHYBAR_BIN --set "$name.jump" icon.drawing=off label="↗  Jump to tmux pane" label.color="$AGENT_POPUP_TEXT" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=4 label.padding_right=4 width=280 background.drawing=off click_script="${AGENT_STATUS_HOME:-$HOME/.local/share/sketchybar-agent-status}/scripts/jump.sh '$tmux'; $SKETCHYBAR_BIN --set $name popup.drawing=off"
   printf '%s\n' "$name" >> "$tmp_rendered"
 done < <(/usr/bin/python3 - "$STATE_FILE" <<'PY'
 import json,sys
