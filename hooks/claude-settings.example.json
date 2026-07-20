@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "SessionStart": [{ "hooks": [{ "type": "command", "command": "~/.local/share/sketchybar-agent-status/hooks/claude-status.sh" }] }],
+    "UserPromptSubmit": [{ "hooks": [{ "type": "command", "command": "~/.local/share/sketchybar-agent-status/hooks/claude-status.sh" }] }],
+    "PreToolUse": [{ "hooks": [{ "type": "command", "command": "~/.local/share/sketchybar-agent-status/hooks/claude-status.sh" }] }],
+    "PostToolUse": [{ "hooks": [{ "type": "command", "command": "~/.local/share/sketchybar-agent-status/hooks/claude-status.sh" }] }],
+    "PermissionRequest": [{ "hooks": [{ "type": "command", "command": "~/.local/share/sketchybar-agent-status/hooks/claude-status.sh" }] }],
+    "Stop": [{ "hooks": [{ "type": "command", "command": "~/.local/share/sketchybar-agent-status/hooks/claude-status.sh" }] }],
+    "SessionEnd": [{ "hooks": [{ "type": "command", "command": "~/.local/share/sketchybar-agent-status/hooks/claude-status.sh" }] }]
+  }
+}
