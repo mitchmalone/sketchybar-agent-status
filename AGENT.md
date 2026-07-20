@@ -1,7 +1,7 @@
 # Project state
 
-Status: review_needed
+Status: complete
 
-Current slice: Claude Code + tmux local MVP complete and verified in isolation. Every indicator opens a popup before jump-back.
+Current slice: Claude Code + tmux local MVP complete and live-smoke-tested on Beebee. Every indicator opens a popup before jump-back.
 
-Next: install into a live SketchyBar configuration and smoke test lifecycle hooks against a fresh tmux Claude session.
+Next: Mitch validates it in a fresh real Claude Code + tmux session; Codex support is the next approved feature slice.

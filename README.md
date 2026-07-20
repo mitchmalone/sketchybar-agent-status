@@ -17,3 +17,15 @@ go run ./cmd/agent-statusctl emit --agent claude --state working --session demo 
 ```
 
 State lives at `~/.local/state/sketchybar-agent-status/state.json`; the Unix socket defaults to `~/.local/state/sketchybar-agent-status/events.sock`.
+
+## Install
+
+```sh
+./install.sh --with-claude-hooks
+```
+
+Then source the installed `sketchybar/agent_status.conf` from `sketchybarrc` and reload SketchyBar. The installer merges its Claude hooks without replacing existing hook groups, including a `~/.claude-psyke` profile when present.
+
+Click an agent indicator to open its popup. It shows agent/state/task context, the most recent lifecycle detail, and a dedicated **Jump to tmux pane** action.
+
+Copy `config/example.config.sh` to `~/.config/sketchybar-agent-status/config.sh` to alter global state emojis or set a per-agent override such as `AGENT_ICON_CODEX_WORKING="⚙️"`.
