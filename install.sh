@@ -2,6 +2,7 @@
 set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
+cd "$ROOT"
 INSTALL_DIR="${AGENT_STATUS_HOME:-$HOME/.local/share/sketchybar-agent-status}"
 BIN_DIR="$INSTALL_DIR/bin"
 PLIST="$HOME/Library/LaunchAgents/com.mitchmalone.sketchybar-agent-status.plist"
