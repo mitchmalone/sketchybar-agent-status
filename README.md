@@ -24,7 +24,7 @@ State lives at `~/.local/state/sketchybar-agent-status/state.json`; the Unix soc
 ./install.sh --with-claude-hooks
 ```
 
-Then source the installed `sketchybar/agent_status.conf` from `sketchybarrc` and reload SketchyBar. The installer merges its Claude hooks without replacing existing hook groups, including a `~/.claude-psyke` profile when present.
+The installer automatically adds a marked source line to an existing `~/.config/sketchybar/sketchybarrc` and reloads SketchyBar. The installer merges its Claude hooks without replacing existing hook groups, including a `~/.claude-psyke` profile when present.
 
 Click an agent indicator to open its popup. It shows agent/state/task context, the most recent lifecycle detail, and a dedicated **Jump to tmux pane** action.
 
