@@ -94,5 +94,20 @@ func Load(path string) (*Store, error) {
 	if s.Sessions == nil {
 		s.Sessions = map[string]Session{}
 	}
+	for key, session := range s.Sessions {
+		if isLifecycleName(session.Title) {
+			session.Title = ""
+			s.Sessions[key] = session
+		}
+	}
 	return s, nil
+}
+
+func isLifecycleName(value string) bool {
+	switch value {
+	case "SessionStart", "UserPromptSubmit", "PreToolUse", "PostToolUse", "PermissionRequest", "Notification", "Stop", "SessionEnd":
+		return true
+	default:
+		return false
+	}
 }

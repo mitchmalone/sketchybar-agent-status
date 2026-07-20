@@ -21,10 +21,10 @@ if tool:
     parts.append(tool)
 elif message:
     parts.append(message[:100])
-print(title + "\t" + " · ".join(parts))
+print(title + "\x1f" + " · ".join(parts))
 PY
 )"
-IFS=$'\t' read -r title detail <<< "$context"
+IFS=$'\x1f' read -r title detail <<< "$context"
 tmux_target="${TMUX_PANE:-}"
 STATUS_CTL="${AGENT_STATUS_CTL:-$HOME/.local/share/sketchybar-agent-status/bin/agent-statusctl}"
 exec "$STATUS_CTL" emit --agent claude --state "$status" --session "$session" --tmux "$tmux_target" --title "$title" --detail "$detail"

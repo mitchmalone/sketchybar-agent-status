@@ -26,6 +26,13 @@ if [[ -f "$SKETCHYBARRC" ]] && ! grep -Fq 'agent_status.conf' "$SKETCHYBARRC"; t
 elif [[ ! -f "$SKETCHYBARRC" ]]; then
   echo "No sketchybarrc found at $SKETCHYBARRC; source $INSTALL_DIR/sketchybar/agent_status.conf manually." >&2
 fi
+RENDERED_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/rendered-items"
+if [[ -f "$RENDERED_FILE" ]]; then
+  while IFS= read -r item; do
+    [[ -n "$item" ]] && sketchybar --remove "$item" 2>/dev/null || true
+  done < "$RENDERED_FILE"
+  rm -f "$RENDERED_FILE"
+fi
 sketchybar --reload
 sed -e "s|__INSTALL_DIR__|$INSTALL_DIR|g" -e "s|__HOME__|$HOME|g" "$ROOT/launchd/com.mitchmalone.sketchybar-agent-status.plist" > "$PLIST"
 launchctl bootout "gui/$(id -u)" "$PLIST" 2>/dev/null || true
