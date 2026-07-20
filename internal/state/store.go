@@ -40,6 +40,17 @@ func (s *Store) Apply(e Event) error {
 		delete(s.Sessions, e.Session)
 		return nil
 	}
+	if current, ok := s.Sessions[e.Session]; ok {
+		if e.Title == "" {
+			e.Title = current.Title
+		}
+		if e.Detail == "" {
+			e.Detail = current.Detail
+		}
+		if e.Tmux == "" {
+			e.Tmux = current.Tmux
+		}
+	}
 	s.Sessions[e.Session] = Session{Event: e, UpdatedAt: time.Now().UTC()}
 	return nil
 }
