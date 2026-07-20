@@ -16,7 +16,7 @@ go build -o "$BIN_DIR/agent-statusctl" "$ROOT/cmd/agent-statusctl"
 cp -R "$ROOT/scripts" "$ROOT/sketchybar" "$ROOT/hooks" "$INSTALL_DIR/"
 cp -n "$ROOT/config/example.config.sh" "$HOME/.config/sketchybar-agent-status/config.sh" || true
 SKETCHYBARRC="$HOME/.config/sketchybar/sketchybarrc"
-if [[ -f "$SKETCHYBARRC" ]] && ! grep -Fq 'sketchybar-agent-status/sketchybar/agent_status.conf' "$SKETCHYBARRC"; then
+if [[ -f "$SKETCHYBARRC" ]] && ! grep -Fq 'agent_status.conf' "$SKETCHYBARRC"; then
   {
     printf '\n# >>> sketchybar-agent-status >>>\n'
     printf 'source "%s/sketchybar/agent_status.conf"\n' "$INSTALL_DIR"
