@@ -28,4 +28,4 @@ The installer automatically adds a marked source line to an existing `~/.config/
 
 Click an agent indicator to open its popup. It shows agent/state/task context, the most recent lifecycle detail, and a dedicated **Jump to tmux pane** action.
 
-Copy `config/example.config.sh` to `~/.config/sketchybar-agent-status/config.sh` to alter global state emojis or set a per-agent override such as `AGENT_ICON_CODEX_WORKING="⚙️"`.
+Copy `config/example.config.sh` to `~/.config/sketchybar-agent-status/config.sh` to alter global state emojis, pin the emoji font/size, or set a per-agent override such as `AGENT_ICON_CODEX_WORKING="⚙️"`.

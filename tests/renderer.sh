@@ -12,6 +12,7 @@ grep -F 'scripts/agent_item.sh' "$temp/commands" >/dev/null
 grep -F -- '--subscribe agent.claude_1 mouse.entered mouse.exited.global' "$temp/commands" >/dev/null
 grep -F 'Jump to tmux pane' "$temp/commands" >/dev/null
 grep -F 'icon=👀' "$temp/commands" >/dev/null
+grep -F 'icon.font=Apple Color Emoji:Regular:13.0' "$temp/commands" >/dev/null
 grep -F 'Task: Review plan' "$temp/commands" >/dev/null
 grep -F 'tmux target: work:1.0' "$temp/commands" >/dev/null
 grep -F 'label.drawing=off width=30' "$temp/commands" >/dev/null
