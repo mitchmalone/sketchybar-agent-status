@@ -12,10 +12,13 @@ BRACKET_MEMBERS_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-sta
 : "${AGENT_STATUS_MAX_ITEMS:=5}"
 : "${AGENT_STATUS_POSITION:=right}"
 : "${AGENT_STATUS_ANCHOR:=agent_status_anchor}"
-: "${AGENT_ICON_FONT:=Apple Color Emoji:Regular:13.0}"
+: "${AGENT_ICON_FONT:=Apple Color Emoji:Regular:10.0}"
 : "${AGENT_ICON_STARTING:=⏳}" "${AGENT_ICON_WORKING:=🧑‍🍳}" "${AGENT_ICON_IDLE:=😴}" "${AGENT_ICON_ATTENTION:=👀}" "${AGENT_ICON_COMPLETED:=✅}" "${AGENT_ICON_FAILED:=❌}" "${AGENT_ICON_UNKNOWN:=❔}"
 : "${AGENT_COLOR_WORKING:=0xff8aadf4}" "${AGENT_COLOR_IDLE:=0xffa6adc8}" "${AGENT_COLOR_ATTENTION:=0xfff9e2af}" "${AGENT_COLOR_COMPLETED:=0xffa6e3a1}" "${AGENT_COLOR_FAILED:=0xfff38ba8}"
 : "${AGENT_ITEM_BG:=0x332a0a3f}" "${AGENT_ITEM_BORDER:=0xffc084fc}" "${AGENT_POPUP_BG:=0xff2a0a3f}" "${AGENT_POPUP_TEXT:=0xfff5efff}" "${AGENT_POPUP_MUTED:=0xffbca8cf}"
+if [[ -z "${AGENT_POPUP_ALIGN:-}" ]]; then
+  [[ "$AGENT_STATUS_POSITION" == "left" ]] && AGENT_POPUP_ALIGN=left || AGENT_POPUP_ALIGN=right
+fi
 
 upper(){ printf '%s' "$1" | tr '[:lower:]' '[:upper:]'; }
 icon_for(){
@@ -102,7 +105,7 @@ while IFS= read -r line; do
   ensure_item "$name.jump" "popup.$name"
   IFS=$'\x1f' read -r task task_more <<< "$(wrap_parts "${title:-Not available yet}")"
   IFS=$'\x1f' read -r latest detail_more <<< "$(wrap_parts "${detail:-No lifecycle detail yet}")"
-  $SKETCHYBAR_BIN --set "$name" icon="$icon" icon.color="$color" icon.font="$AGENT_ICON_FONT" icon.width=30 icon.align=center icon.y_offset=0 icon.padding_left=0 icon.padding_right=0 label.drawing=off width=30 padding_left=0 padding_right=0 background.drawing=on background.color="$AGENT_ITEM_BG" background.border_width=0 script="${AGENT_STATUS_HOME:-$HOME/.local/share/sketchybar-agent-status}/scripts/agent_item.sh" update_freq=1 popup.align=right popup.background.drawing=on popup.background.color="$AGENT_POPUP_BG" popup.background.border_color="$AGENT_ITEM_BORDER" popup.background.corner_radius=0 popup.background.border_width=1 popup.background.padding_left=12 popup.background.padding_right=12 --subscribe "$name" mouse.entered mouse.exited.global
+  $SKETCHYBAR_BIN --set "$name" icon="$icon" icon.color="$color" icon.font="$AGENT_ICON_FONT" icon.width=30 icon.align=center icon.y_offset=0 icon.padding_left=0 icon.padding_right=0 label.drawing=off width=30 padding_left=0 padding_right=0 background.drawing=off script="${AGENT_STATUS_HOME:-$HOME/.local/share/sketchybar-agent-status}/scripts/agent_item.sh" update_freq=1 click_script="$SKETCHYBAR_BIN --set $name popup.drawing=toggle" popup.align="$AGENT_POPUP_ALIGN" popup.background.drawing=on popup.background.color="$AGENT_POPUP_BG" popup.background.border_color="$AGENT_ITEM_BORDER" popup.background.corner_radius=0 popup.background.border_width=1 popup.background.padding_left=12 popup.background.padding_right=12
   $SKETCHYBAR_BIN --set "$name.info" icon.drawing=off label="Agent: ${agent} · State: ${status}" label.color="$AGENT_POPUP_TEXT" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=8 label.padding_right=8 width=310 background.drawing=off
   $SKETCHYBAR_BIN --set "$name.task" icon.drawing=off label="Task: $task" label.color="$AGENT_POPUP_TEXT" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=8 label.padding_right=8 width=310 background.drawing=off
   $SKETCHYBAR_BIN --set "$name.task_more" icon.drawing=off label="$task_more" label.drawing="$([[ -n "$task_more" ]] && echo on || echo off)" label.color="$AGENT_POPUP_TEXT" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=8 label.padding_right=8 width=310 background.drawing=off
