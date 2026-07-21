@@ -2,20 +2,23 @@
 set -euo pipefail
 
 STATE_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/state.json"
-CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/sketchybar-agent-status/config.sh"
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/sketchybar-agent-status"
+CONFIG_FILE="$CONFIG_DIR/config.sh"
+LOCAL_CONFIG_FILE="$CONFIG_DIR/local.sh"
 SKETCHYBAR_BIN="${SKETCHYBAR_BIN:-sketchybar}"
 RENDERED_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/rendered-items"
 RENDERED_POSITION_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/rendered-position"
 BRACKET_MEMBERS_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/bracket-members"
 [[ -f "$CONFIG_FILE" ]] && source "$CONFIG_FILE"
+[[ -f "$LOCAL_CONFIG_FILE" ]] && source "$LOCAL_CONFIG_FILE"
 
 : "${AGENT_STATUS_MAX_ITEMS:=5}"
 : "${AGENT_STATUS_POSITION:=right}"
 : "${AGENT_STATUS_ANCHOR:=agent_status_anchor}"
-: "${AGENT_ICON_FONT:=Apple Color Emoji:Regular:10.0}"
-: "${AGENT_ICON_STARTING:=⏳}" "${AGENT_ICON_WORKING:=🧑‍🍳}" "${AGENT_ICON_IDLE:=😴}" "${AGENT_ICON_ATTENTION:=👀}" "${AGENT_ICON_COMPLETED:=✅}" "${AGENT_ICON_FAILED:=❌}" "${AGENT_ICON_UNKNOWN:=❔}"
-: "${AGENT_COLOR_WORKING:=0xff8aadf4}" "${AGENT_COLOR_IDLE:=0xffa6adc8}" "${AGENT_COLOR_ATTENTION:=0xfff9e2af}" "${AGENT_COLOR_COMPLETED:=0xffa6e3a1}" "${AGENT_COLOR_FAILED:=0xfff38ba8}"
-: "${AGENT_ITEM_BG:=0x332a0a3f}" "${AGENT_CLUSTER_BG:=0x00000000}" "${AGENT_ITEM_BORDER:=0xffc084fc}" "${AGENT_POPUP_BG:=0xff2a0a3f}" "${AGENT_POPUP_TEXT:=0xfff5efff}" "${AGENT_POPUP_MUTED:=0xffbca8cf}"
+: "${AGENT_ICON_FONT:=SF Pro:Regular:10.0}"
+: "${AGENT_ICON_STARTING:=◌}" "${AGENT_ICON_WORKING:=●}" "${AGENT_ICON_IDLE:=○}" "${AGENT_ICON_ATTENTION:=!}" "${AGENT_ICON_COMPLETED:=✓}" "${AGENT_ICON_FAILED:=×}" "${AGENT_ICON_UNKNOWN:=?}"
+: "${AGENT_COLOR_WORKING:=0xff64d2ff}" "${AGENT_COLOR_IDLE:=0xffaeaeb2}" "${AGENT_COLOR_ATTENTION:=0xffffd60a}" "${AGENT_COLOR_COMPLETED:=0xff30d158}" "${AGENT_COLOR_FAILED:=0xffff453a}"
+: "${AGENT_ITEM_BG:=0xff242426}" "${AGENT_CLUSTER_BG:=0x00000000}" "${AGENT_ITEM_BORDER:=0xff636366}" "${AGENT_POPUP_BG:=0xff1c1c1e}" "${AGENT_POPUP_TEXT:=0xffffffff}" "${AGENT_POPUP_MUTED:=0xff98989d}"
 if [[ -z "${AGENT_POPUP_ALIGN:-}" ]]; then
   [[ "$AGENT_STATUS_POSITION" == "left" ]] && AGENT_POPUP_ALIGN=left || AGENT_POPUP_ALIGN=right
 fi
