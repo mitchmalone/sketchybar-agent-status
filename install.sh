@@ -10,10 +10,16 @@ INSTALL_CLAUDE_HOOKS=false
 [[ "${1:-}" == "--with-claude-hooks" ]] && INSTALL_CLAUDE_HOOKS=true
 command -v sketchybar >/dev/null || { echo "SketchyBar is required" >&2; exit 1; }
 command -v tmux >/dev/null || { echo "tmux is required" >&2; exit 1; }
+command -v rsync >/dev/null || { echo "rsync is required" >&2; exit 1; }
 mkdir -p "$BIN_DIR" "$HOME/.config/sketchybar-agent-status" "$HOME/.config/sketchybar"
 go build -o "$BIN_DIR/agent-statusd" "$ROOT/cmd/agent-statusd"
 go build -o "$BIN_DIR/agent-statusctl" "$ROOT/cmd/agent-statusctl"
-cp -R "$ROOT/scripts" "$ROOT/sketchybar" "$ROOT/hooks" "$INSTALL_DIR/"
+# Copy directory contents, not the directories themselves. `cp -R source dest`
+# nests source below an existing dest on macOS, leaving the live renderer stale.
+for component in scripts sketchybar hooks; do
+  mkdir -p "$INSTALL_DIR/$component"
+  rsync -a --delete "$ROOT/$component/" "$INSTALL_DIR/$component/"
+done
 cp -n "$ROOT/config/example.config.sh" "$HOME/.config/sketchybar-agent-status/config.sh" || true
 SKETCHYBARRC="$HOME/.config/sketchybar/sketchybarrc"
 if [[ -f "$SKETCHYBARRC" ]] && ! grep -Fq 'agent_status.conf' "$SKETCHYBARRC"; then
