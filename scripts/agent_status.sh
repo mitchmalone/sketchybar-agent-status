@@ -10,6 +10,7 @@ RENDERED_POSITION_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-s
 
 : "${AGENT_STATUS_MAX_ITEMS:=5}"
 : "${AGENT_STATUS_POSITION:=right}"
+: "${AGENT_STATUS_ANCHOR:=agent_status_anchor}"
 : "${AGENT_ICON_FONT:=Apple Color Emoji:Regular:13.0}"
 : "${AGENT_ICON_STARTING:=⏳}" "${AGENT_ICON_WORKING:=🧑‍🍳}" "${AGENT_ICON_IDLE:=😴}" "${AGENT_ICON_ATTENTION:=👀}" "${AGENT_ICON_COMPLETED:=✅}" "${AGENT_ICON_FAILED:=❌}" "${AGENT_ICON_UNKNOWN:=❔}"
 : "${AGENT_COLOR_WORKING:=0xff8aadf4}" "${AGENT_COLOR_IDLE:=0xffa6adc8}" "${AGENT_COLOR_ATTENTION:=0xfff9e2af}" "${AGENT_COLOR_COMPLETED:=0xffa6e3a1}" "${AGENT_COLOR_FAILED:=0xfff38ba8}"
@@ -27,6 +28,11 @@ item_exists(){ "$SKETCHYBAR_BIN" --query "$1" 2>&1 | grep -Fq "\"name\": \"$1\""
 ensure_item(){
   local name="$1" position="$2"
   item_exists "$name" || "$SKETCHYBAR_BIN" --add item "$name" "$position"
+}
+place_after(){
+  local name="$1" reference="$2"
+  item_exists "$AGENT_STATUS_ANCHOR" || return 0
+  "$SKETCHYBAR_BIN" --move "$name" after "$reference"
 }
 remove_session_widget(){
   local name="$1"
@@ -67,6 +73,7 @@ fi
 tmp_rendered="$(mktemp)"; trap 'rm -f "$tmp_rendered"' EXIT
 count=0
 bracket_members=""
+previous_item="$AGENT_STATUS_ANCHOR"
 while IFS= read -r line; do
   count=$((count + 1))
   [[ "$count" -le "$AGENT_STATUS_MAX_ITEMS" ]] || continue
@@ -74,11 +81,14 @@ while IFS= read -r line; do
   if [[ -n "$bracket_members" ]]; then
     sep="agent.separator.$(safe_name "$session")"
     ensure_item "$sep" "$AGENT_STATUS_POSITION"
+    place_after "$sep" "$previous_item"
     $SKETCHYBAR_BIN --set "$sep" icon.drawing=off label.drawing=off width=1 padding_left=0 padding_right=0 background.drawing=on background.color="$AGENT_ITEM_BORDER" background.border_width=0 background.height=22
     bracket_members="$bracket_members $sep"
     printf '%s\n' "$sep" >> "$tmp_rendered"
+    previous_item="$sep"
   fi
   ensure_item "$name" "$AGENT_STATUS_POSITION"
+  place_after "$name" "$previous_item"
   ensure_item "$name.info" "popup.$name"
   ensure_item "$name.task" "popup.$name"
   ensure_item "$name.task_more" "popup.$name"
@@ -100,6 +110,7 @@ while IFS= read -r line; do
   $SKETCHYBAR_BIN --set "$name.jump" icon.drawing=off label="↗  Jump to tmux pane" label.color="$AGENT_POPUP_TEXT" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=8 label.padding_right=8 width=310 background.drawing=off click_script="${AGENT_STATUS_HOME:-$HOME/.local/share/sketchybar-agent-status}/scripts/jump.sh '$tmux'; $SKETCHYBAR_BIN --set $name popup.drawing=off"
   bracket_members="$bracket_members $name"
   printf '%s\n' "$name" >> "$tmp_rendered"
+  previous_item="$name"
 done < <(/usr/bin/python3 - "$STATE_FILE" <<'PY'
 import json,sys
 for key,value in json.load(open(sys.argv[1])).get('sessions',{}).items():
