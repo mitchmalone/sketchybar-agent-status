@@ -8,7 +8,8 @@ printf '%s\n' '#!/usr/bin/env bash' 'if [[ "$1" == "--query" ]]; then item="$FAK
 chmod +x "$temp/bin/sketchybar"
 printf '%s\n' '{"sessions":{"claude-1":{"session":"claude-1","agent":"claude","state":"attention","title":"Review plan","detail":"PermissionRequest","tmux":"work:1.0"}}}' > "$temp/state/sketchybar-agent-status/state.json"
 XDG_STATE_HOME="$temp/state" SKETCHYBAR_BIN="$temp/bin/sketchybar" SKETCHYBAR_LOG="$temp/commands" FAKE_ITEMS="$temp/items" AGENT_STATUS_HOME="$root" "$root/scripts/agent_status.sh"
-grep -F 'click_script=' "$temp/commands" | grep -F 'popup.drawing=toggle' >/dev/null
+grep -F 'scripts/agent_item.sh' "$temp/commands" >/dev/null
+grep -F -- '--subscribe agent.claude_1 mouse.entered mouse.exited.global' "$temp/commands" >/dev/null
 grep -F 'Jump to tmux pane' "$temp/commands" >/dev/null
 grep -F 'icon=👀' "$temp/commands" >/dev/null
 grep -F 'Task: Review plan' "$temp/commands" >/dev/null
@@ -16,6 +17,8 @@ grep -F 'tmux target: work:1.0' "$temp/commands" >/dev/null
 grep -F 'label.drawing=off width=30' "$temp/commands" >/dev/null
 grep -F 'popup.background.drawing=on' "$temp/commands" >/dev/null
 grep -F 'background.drawing=off' "$temp/commands" >/dev/null
+grep -F 'agent.separator.claude_1' "$temp/commands" >/dev/null || true
+grep -F -- '--add bracket agent_status' "$temp/commands" >/dev/null
 before_lines="$(wc -l < "$temp/commands")"
 XDG_STATE_HOME="$temp/state" SKETCHYBAR_BIN="$temp/bin/sketchybar" SKETCHYBAR_LOG="$temp/commands" FAKE_ITEMS="$temp/items" AGENT_STATUS_HOME="$root" "$root/scripts/agent_status.sh"
 ! tail -n "+$((before_lines + 1))" "$temp/commands" | grep -F -- '--add item' >/dev/null
