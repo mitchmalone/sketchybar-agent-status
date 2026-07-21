@@ -8,6 +8,7 @@ RENDERED_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/ren
 [[ -f "$CONFIG_FILE" ]] && source "$CONFIG_FILE"
 
 : "${AGENT_STATUS_MAX_ITEMS:=5}"
+: "${AGENT_STATUS_POSITION:=right}"
 : "${AGENT_ICON_STARTING:=⏳}" "${AGENT_ICON_WORKING:=🧑‍🍳}" "${AGENT_ICON_IDLE:=😴}" "${AGENT_ICON_ATTENTION:=👀}" "${AGENT_ICON_COMPLETED:=✅}" "${AGENT_ICON_FAILED:=❌}" "${AGENT_ICON_UNKNOWN:=❔}"
 : "${AGENT_COLOR_WORKING:=0xff8aadf4}" "${AGENT_COLOR_IDLE:=0xffa6adc8}" "${AGENT_COLOR_ATTENTION:=0xfff9e2af}" "${AGENT_COLOR_COMPLETED:=0xffa6e3a1}" "${AGENT_COLOR_FAILED:=0xfff38ba8}"
 : "${AGENT_ITEM_BG:=0x332a0a3f}" "${AGENT_ITEM_BORDER:=0xffc084fc}" "${AGENT_POPUP_BG:=0xff2a0a3f}" "${AGENT_POPUP_TEXT:=0xfff5efff}" "${AGENT_POPUP_MUTED:=0xffbca8cf}"
@@ -46,12 +47,12 @@ while IFS= read -r line; do
   IFS=$'\t' read -r session agent status title detail tmux updated <<< "$line"; name="agent.$(safe_name "$session")"; icon="$(icon_for "$agent" "$status")"; color="$(color_for "$status")"
   if [[ -n "$bracket_members" ]]; then
     sep="agent.separator.$(safe_name "$session")"
-    ensure_item "$sep" right
+    ensure_item "$sep" "$AGENT_STATUS_POSITION"
     $SKETCHYBAR_BIN --set "$sep" icon.drawing=off label.drawing=off width=1 padding_left=0 padding_right=0 background.drawing=on background.color="$AGENT_ITEM_BORDER" background.border_width=0 background.height=22
     bracket_members="$bracket_members $sep"
     printf '%s\n' "$sep" >> "$tmp_rendered"
   fi
-  ensure_item "$name" right
+  ensure_item "$name" "$AGENT_STATUS_POSITION"
   ensure_item "$name.info" "popup.$name"
   ensure_item "$name.task" "popup.$name"
   ensure_item "$name.task_more" "popup.$name"
