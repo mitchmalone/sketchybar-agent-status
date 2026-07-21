@@ -31,6 +31,11 @@ before_lines="$(wc -l < "$temp/commands")"
 XDG_STATE_HOME="$temp/state" SKETCHYBAR_BIN="$temp/bin/sketchybar" SKETCHYBAR_LOG="$temp/commands" FAKE_ITEMS="$temp/items" AGENT_STATUS_HOME="$root" AGENT_STATUS_POSITION=left "$root/scripts/agent_status.sh"
 ! tail -n "+$((before_lines + 1))" "$temp/commands" | grep -F -- '--add item' >/dev/null
 ! tail -n "+$((before_lines + 1))" "$temp/commands" | grep -F -- '--add bracket agent_status' >/dev/null
+reload_lines="$(wc -l < "$temp/commands")"
+rm -f "$temp/items"/*
+touch "$temp/items/agent_status_anchor"
+XDG_STATE_HOME="$temp/state" SKETCHYBAR_BIN="$temp/bin/sketchybar" SKETCHYBAR_LOG="$temp/commands" FAKE_ITEMS="$temp/items" AGENT_STATUS_HOME="$root" AGENT_STATUS_POSITION=left "$root/scripts/agent_status.sh"
+tail -n "+$((reload_lines + 1))" "$temp/commands" | grep -F -- '--add bracket agent_status' >/dev/null
 printf '%s\n' 'right' > "$temp/state/sketchybar-agent-status/rendered-position"
 XDG_STATE_HOME="$temp/state" SKETCHYBAR_BIN="$temp/bin/sketchybar" SKETCHYBAR_LOG="$temp/commands" FAKE_ITEMS="$temp/items" AGENT_STATUS_HOME="$root" AGENT_STATUS_POSITION=left "$root/scripts/agent_status.sh"
 tail -n "+$((before_lines + 1))" "$temp/commands" | grep -F -- '--remove agent.claude_1' >/dev/null

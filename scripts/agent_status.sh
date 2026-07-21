@@ -127,7 +127,7 @@ if [[ -n "$bracket_members" ]]; then
   # SketchyBar does not update an existing bracket's members. Rebuild the
   # bracket only when the session/divider list changes; ordinary state updates
   # preserve it in place and therefore do not flash.
-  if [[ ! -f "$BRACKET_MEMBERS_FILE" ]] || [[ "$(<"$BRACKET_MEMBERS_FILE")" != "$bracket_members" ]]; then
+  if ! item_exists agent_status || [[ ! -f "$BRACKET_MEMBERS_FILE" ]] || [[ "$(<"$BRACKET_MEMBERS_FILE")" != "$bracket_members" ]]; then
     $SKETCHYBAR_BIN --remove agent_status 2>/dev/null || true
     $SKETCHYBAR_BIN --add bracket agent_status $bracket_members --set agent_status background.drawing=on background.color="$AGENT_CLUSTER_BG" background.border_color="$AGENT_ITEM_BORDER" background.border_width=1 background.height=22 background.corner_radius=0 background.padding_left=1 background.padding_right=1
     printf '%s\n' "$bracket_members" > "$BRACKET_MEMBERS_FILE"
