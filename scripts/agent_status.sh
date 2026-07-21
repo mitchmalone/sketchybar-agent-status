@@ -5,6 +5,7 @@ STATE_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/state.
 CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/sketchybar-agent-status/config.sh"
 SKETCHYBAR_BIN="${SKETCHYBAR_BIN:-sketchybar}"
 RENDERED_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/rendered-items"
+RENDERED_POSITION_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/rendered-position"
 [[ -f "$CONFIG_FILE" ]] && source "$CONFIG_FILE"
 
 : "${AGENT_STATUS_MAX_ITEMS:=5}"
@@ -27,6 +28,25 @@ ensure_item(){
   local name="$1" position="$2"
   item_exists "$name" || "$SKETCHYBAR_BIN" --add item "$name" "$position"
 }
+remove_session_widget(){
+  local name="$1"
+  for suffix in info task task_more detail detail_more target updated jump; do
+    "$SKETCHYBAR_BIN" --remove "$name.$suffix" 2>/dev/null || true
+  done
+  "$SKETCHYBAR_BIN" --remove "$name" 2>/dev/null || true
+}
+clear_rendered_widgets(){
+  [[ -f "$RENDERED_FILE" ]] || return 0
+  while IFS= read -r old; do
+    [[ -z "$old" ]] && continue
+    if [[ "$old" == agent.separator.* ]]; then
+      "$SKETCHYBAR_BIN" --remove "$old" 2>/dev/null || true
+    else
+      remove_session_widget "$old"
+    fi
+  done < "$RENDERED_FILE"
+  rm -f "$RENDERED_FILE"
+}
 wrap_parts(){ /usr/bin/python3 - "$1" <<'PY'
 import sys, textwrap
 lines = textwrap.wrap(sys.argv[1], width=44) or ['']
@@ -39,6 +59,11 @@ PY
 
 [[ -f "$STATE_FILE" ]] || exit 0
 mkdir -p "$(dirname "$RENDERED_FILE")"
+# Items retain their original bar side after creation. A position change must
+# recreate them once; afterwards normal state updates continue in place.
+if [[ ! -f "$RENDERED_POSITION_FILE" ]] || [[ "$(<"$RENDERED_POSITION_FILE")" != "$AGENT_STATUS_POSITION" ]]; then
+  clear_rendered_widgets
+fi
 tmp_rendered="$(mktemp)"; trap 'rm -f "$tmp_rendered"' EXIT
 count=0
 bracket_members=""
@@ -92,3 +117,4 @@ if [[ -f "$RENDERED_FILE" ]]; then
   done < "$RENDERED_FILE"
 fi
 mv "$tmp_rendered" "$RENDERED_FILE"
+printf '%s\n' "$AGENT_STATUS_POSITION" > "$RENDERED_POSITION_FILE"
