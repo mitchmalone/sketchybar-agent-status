@@ -17,7 +17,8 @@ grep -F 'icon.font=Apple Color Emoji:Regular:10.0' "$temp/commands" >/dev/null
 grep -F 'Task: Review plan' "$temp/commands" >/dev/null
 grep -F 'tmux target: work:1.0' "$temp/commands" >/dev/null
 grep -F 'label.drawing=off width=30' "$temp/commands" >/dev/null
-grep -F 'background.drawing=on background.color=0x332a0a3f background.border_width=0 background.height=22' "$temp/commands" >/dev/null
+grep -F 'background.drawing=on background.color=0x332a0a3f background.border_width=0 background.height=20' "$temp/commands" >/dev/null
+grep -F 'background.padding_left=1 background.padding_right=1' "$temp/commands" >/dev/null
 grep -F 'click_script=' "$temp/commands" >/dev/null
 grep -F 'popup.align=left' "$temp/commands" >/dev/null
 grep -F 'background.drawing=off' "$temp/commands" >/dev/null

@@ -88,7 +88,7 @@ while IFS= read -r line; do
     sep="agent.separator.$(safe_name "$session")"
     ensure_item "$sep" "$AGENT_STATUS_POSITION"
     place_after "$sep" "$previous_item"
-    $SKETCHYBAR_BIN --set "$sep" icon.drawing=off label.drawing=off width=1 padding_left=0 padding_right=0 background.drawing=on background.color="$AGENT_ITEM_BORDER" background.border_width=0 background.height=22
+    $SKETCHYBAR_BIN --set "$sep" icon.drawing=off label.drawing=off width=1 padding_left=0 padding_right=0 background.drawing=on background.color="$AGENT_ITEM_BORDER" background.border_width=0 background.height=20
     bracket_members="$bracket_members $sep"
     printf '%s\n' "$sep" >> "$tmp_rendered"
     previous_item="$sep"
@@ -105,7 +105,7 @@ while IFS= read -r line; do
   ensure_item "$name.jump" "popup.$name"
   IFS=$'\x1f' read -r task task_more <<< "$(wrap_parts "${title:-Not available yet}")"
   IFS=$'\x1f' read -r latest detail_more <<< "$(wrap_parts "${detail:-No lifecycle detail yet}")"
-  $SKETCHYBAR_BIN --set "$name" icon="$icon" icon.color="$color" icon.font="$AGENT_ICON_FONT" icon.width=30 icon.align=center icon.y_offset=0 icon.padding_left=0 icon.padding_right=0 label.drawing=off width=30 padding_left=0 padding_right=0 background.drawing=on background.color="$AGENT_ITEM_BG" background.border_width=0 background.height=22 script="${AGENT_STATUS_HOME:-$HOME/.local/share/sketchybar-agent-status}/scripts/agent_item.sh" update_freq=1 click_script="$SKETCHYBAR_BIN --set $name popup.drawing=toggle" popup.align="$AGENT_POPUP_ALIGN" popup.background.drawing=on popup.background.color="$AGENT_POPUP_BG" popup.background.border_color="$AGENT_ITEM_BORDER" popup.background.corner_radius=0 popup.background.border_width=1 popup.background.padding_left=12 popup.background.padding_right=12
+  $SKETCHYBAR_BIN --set "$name" icon="$icon" icon.color="$color" icon.font="$AGENT_ICON_FONT" icon.width=30 icon.align=center icon.y_offset=0 icon.padding_left=0 icon.padding_right=0 label.drawing=off width=30 padding_left=0 padding_right=0 background.drawing=on background.color="$AGENT_ITEM_BG" background.border_width=0 background.height=20 script="${AGENT_STATUS_HOME:-$HOME/.local/share/sketchybar-agent-status}/scripts/agent_item.sh" update_freq=1 click_script="$SKETCHYBAR_BIN --set $name popup.drawing=toggle" popup.align="$AGENT_POPUP_ALIGN" popup.background.drawing=on popup.background.color="$AGENT_POPUP_BG" popup.background.border_color="$AGENT_ITEM_BORDER" popup.background.corner_radius=0 popup.background.border_width=1 popup.background.padding_left=12 popup.background.padding_right=12
   $SKETCHYBAR_BIN --set "$name.info" icon.drawing=off label="Agent: ${agent} · State: ${status}" label.color="$AGENT_POPUP_TEXT" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=8 label.padding_right=8 width=310 background.drawing=off
   $SKETCHYBAR_BIN --set "$name.task" icon.drawing=off label="Task: $task" label.color="$AGENT_POPUP_TEXT" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=8 label.padding_right=8 width=310 background.drawing=off
   $SKETCHYBAR_BIN --set "$name.task_more" icon.drawing=off label="$task_more" label.drawing="$([[ -n "$task_more" ]] && echo on || echo off)" label.color="$AGENT_POPUP_TEXT" label.font="Monaco:Regular:10.0" label.align=left label.padding_left=8 label.padding_right=8 width=310 background.drawing=off
@@ -129,7 +129,7 @@ if [[ -n "$bracket_members" ]]; then
   # preserve it in place and therefore do not flash.
   if [[ ! -f "$BRACKET_MEMBERS_FILE" ]] || [[ "$(<"$BRACKET_MEMBERS_FILE")" != "$bracket_members" ]]; then
     $SKETCHYBAR_BIN --remove agent_status 2>/dev/null || true
-    $SKETCHYBAR_BIN --add bracket agent_status $bracket_members --set agent_status background.drawing=on background.color="$AGENT_CLUSTER_BG" background.border_color="$AGENT_ITEM_BORDER" background.border_width=1 background.height=22 background.corner_radius=0
+    $SKETCHYBAR_BIN --add bracket agent_status $bracket_members --set agent_status background.drawing=on background.color="$AGENT_CLUSTER_BG" background.border_color="$AGENT_ITEM_BORDER" background.border_width=1 background.height=22 background.corner_radius=0 background.padding_left=1 background.padding_right=1
     printf '%s\n' "$bracket_members" > "$BRACKET_MEMBERS_FILE"
   fi
 else
