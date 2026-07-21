@@ -6,6 +6,7 @@ CONFIG_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/sketchybar-agent-status/config.sh
 SKETCHYBAR_BIN="${SKETCHYBAR_BIN:-sketchybar}"
 RENDERED_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/rendered-items"
 RENDERED_POSITION_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/rendered-position"
+BRACKET_MEMBERS_FILE="${XDG_STATE_HOME:-$HOME/.local/state}/sketchybar-agent-status/bracket-members"
 [[ -f "$CONFIG_FILE" ]] && source "$CONFIG_FILE"
 
 : "${AGENT_STATUS_MAX_ITEMS:=5}"
@@ -52,6 +53,8 @@ clear_rendered_widgets(){
     fi
   done < "$RENDERED_FILE"
   rm -f "$RENDERED_FILE"
+  "$SKETCHYBAR_BIN" --remove agent_status 2>/dev/null || true
+  rm -f "$BRACKET_MEMBERS_FILE"
 }
 wrap_parts(){ /usr/bin/python3 - "$1" <<'PY'
 import sys, textwrap
@@ -118,9 +121,17 @@ for key,value in json.load(open(sys.argv[1])).get('sessions',{}).items():
 PY
 )
 if [[ -n "$bracket_members" ]]; then
-  $SKETCHYBAR_BIN --add bracket agent_status $bracket_members --set agent_status background.drawing=on background.color="$AGENT_ITEM_BG" background.border_color="$AGENT_ITEM_BORDER" background.border_width=1 background.height=22 background.corner_radius=0
+  # SketchyBar does not update an existing bracket's members. Rebuild the
+  # bracket only when the session/divider list changes; ordinary state updates
+  # preserve it in place and therefore do not flash.
+  if [[ ! -f "$BRACKET_MEMBERS_FILE" ]] || [[ "$(<"$BRACKET_MEMBERS_FILE")" != "$bracket_members" ]]; then
+    $SKETCHYBAR_BIN --remove agent_status 2>/dev/null || true
+    $SKETCHYBAR_BIN --add bracket agent_status $bracket_members --set agent_status background.drawing=on background.color="$AGENT_ITEM_BG" background.border_color="$AGENT_ITEM_BORDER" background.border_width=1 background.height=22 background.corner_radius=0
+    printf '%s\n' "$bracket_members" > "$BRACKET_MEMBERS_FILE"
+  fi
 else
   $SKETCHYBAR_BIN --remove agent_status 2>/dev/null || true
+  rm -f "$BRACKET_MEMBERS_FILE"
 fi
 if [[ -f "$RENDERED_FILE" ]]; then
   while IFS= read -r old; do

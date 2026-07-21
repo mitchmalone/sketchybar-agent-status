@@ -21,11 +21,13 @@ grep -F 'popup.background.drawing=on' "$temp/commands" >/dev/null
 grep -F 'background.drawing=off' "$temp/commands" >/dev/null
 grep -F 'agent.separator.claude_1' "$temp/commands" >/dev/null || true
 grep -F -- '--add bracket agent_status' "$temp/commands" >/dev/null
+grep -F -- '--remove agent_status' "$temp/commands" >/dev/null
 grep -F -- '--add item agent.claude_1 left' "$temp/commands" >/dev/null
 grep -F -- '--move agent.claude_1 after agent_status_anchor' "$temp/commands" >/dev/null
 before_lines="$(wc -l < "$temp/commands")"
 XDG_STATE_HOME="$temp/state" SKETCHYBAR_BIN="$temp/bin/sketchybar" SKETCHYBAR_LOG="$temp/commands" FAKE_ITEMS="$temp/items" AGENT_STATUS_HOME="$root" AGENT_STATUS_POSITION=left "$root/scripts/agent_status.sh"
 ! tail -n "+$((before_lines + 1))" "$temp/commands" | grep -F -- '--add item' >/dev/null
+! tail -n "+$((before_lines + 1))" "$temp/commands" | grep -F -- '--add bracket agent_status' >/dev/null
 printf '%s\n' 'right' > "$temp/state/sketchybar-agent-status/rendered-position"
 XDG_STATE_HOME="$temp/state" SKETCHYBAR_BIN="$temp/bin/sketchybar" SKETCHYBAR_LOG="$temp/commands" FAKE_ITEMS="$temp/items" AGENT_STATUS_HOME="$root" AGENT_STATUS_POSITION=left "$root/scripts/agent_status.sh"
 tail -n "+$((before_lines + 1))" "$temp/commands" | grep -F -- '--remove agent.claude_1' >/dev/null
